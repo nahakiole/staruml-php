@@ -1,58 +1,58 @@
 {
-  "id": "java",
-  "name": "Java",
+  "id": "php",
+  "name": "PHP",
   "schema": {
-    "java.gen": {
-      "text": "Java Code Generation",
+    "php.gen": {
+      "text": "PHP Code Generation",
       "type": "section"
     },
-    "java.gen.javaDoc": {
-      "text": "JavaDoc",
-      "description": "Generate JavaDoc comments.",
+    "php.gen.phpDoc": {
+      "text": "PHPDoc",
+      "description": "Generate PHPDoc comments.",
       "type": "check",
       "default": true
     },
-    "java.gen.useTab": {
+    "php.gen.useTab": {
       "text": "Use Tab",
       "description": "Use Tab for indentation instead of spaces.",
       "type": "check",
       "default": false
     },
-    "java.gen.indentSpaces": {
+    "php.gen.indentSpaces": {
       "text": "Indent Spaces",
       "description": "Number of spaces for indentation.",
       "type": "number",
       "default": 4
     },
-    "java.rev": {
-      "text": "Java Reverse Engineering",
+    "php.rev": {
+      "text": "PHP Reverse Engineering",
       "type": "section"
     },
-    "java.rev.association": {
+    "php.rev.association": {
       "text": "Use Association",
-      "description": "Reverse Java Fields as UML Associations.",
+      "description": "Reverse PHP Fields as UML Associations.",
       "type": "check",
       "default": true
     },
-    "java.rev.publicOnly": {
+    "php.rev.publicOnly": {
       "text": "Public Only",
       "description": "Reverse public members only.",
       "type": "check",
       "default": false
     },
-    "java.rev.typeHierarchy": {
+    "php.rev.typeHierarchy": {
       "text": "Type Hierarchy Diagram",
       "description": "Create a type hierarchy diagram for all classes and interfaces",
       "type": "check",
       "default": true
     },
-    "java.rev.packageOverview": {
+    "php.rev.packageOverview": {
       "text": "Package Overview Diagram",
       "description": "Create overview diagram for each package",
       "type": "check",
       "default": true
     },
-    "java.rev.packageStructure": {
+    "php.rev.packageStructure": {
       "text": "Package Structure Diagram",
       "description": "Create a package structure diagram for all packages",
       "type": "check",

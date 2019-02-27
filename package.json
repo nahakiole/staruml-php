@@ -1,15 +1,15 @@
 {
-  "name": "staruml.java",
-  "title": "Java",
-  "description": "Java code generation and reverse engineering.",
-  "homepage": "https://github.com/staruml/staruml-java",
-  "issues": "https://github.com/staruml/staruml-java/issues",
-  "keywords": ["java"],
-  "version": "0.9.5",
+  "name": "staruml.php",
+  "title": "PHP",
+  "description": "PHP code generation",
+  "homepage": "https://github.com/nahakiole/staruml-php",
+  "issues": "https://github.com/nahakiole/staruml-php/issues",
+  "keywords": ["php"],
+  "version": "0.0.1",
   "author": {
-    "name": "Minkyu Lee",
-    "email": "niklaus.lee@gmail.com",
-    "url": "https://github.com/niklauslee"
+    "name": "Robin Glauser",
+    "email": "robin.glauser@gmail.com",
+    "url": "https://github.com/nahakiole"
   },
   "license": "MIT",
   "engines": {

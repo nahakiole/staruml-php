@@ -22,28 +22,27 @@
  */
 
 const codeGenerator = require('./code-generator')
-const codeAnalyzer = require('./code-analyzer')
 
 function getGenOptions () {
   return {
-    javaDoc: app.preferences.get('java.gen.javaDoc'),
-    useTab: app.preferences.get('java.gen.useTab'),
-    indentSpaces: app.preferences.get('java.gen.indentSpaces')
+    phpDoc: app.preferences.get('php.gen.phpDoc'),
+    useTab: app.preferences.get('php.gen.useTab'),
+    indentSpaces: app.preferences.get('php.gen.indentSpaces')
   }
 }
 
 function getRevOptions () {
   return {
-    association: app.preferences.get('java.rev.association'),
-    publicOnly: app.preferences.get('java.rev.publicOnly'),
-    typeHierarchy: app.preferences.get('java.rev.typeHierarchy'),
-    packageOverview: app.preferences.get('java.rev.packageOverview'),
-    packageStructure: app.preferences.get('java.rev.packageStructure')
+    association: app.preferences.get('php.rev.association'),
+    publicOnly: app.preferences.get('php.rev.publicOnly'),
+    typeHierarchy: app.preferences.get('php.rev.typeHierarchy'),
+    packageOverview: app.preferences.get('php.rev.packageOverview'),
+    packageStructure: app.preferences.get('php.rev.packageStructure')
   }
 }
 
 /**
- * Command Handler for Java Generate
+ * Command Handler for php Generate
  *
  * @param {Element} base
  * @param {string} path
@@ -83,36 +82,17 @@ function _handleGenerate (base, path, options) {
   }
 }
 
-/**
- * Command Handler for Java Reverse
- *
- * @param {string} basePath
- * @param {Object} options
- */
-function _handleReverse (basePath, options) {
-  // If options is not passed, get from preference
-  options = getRevOptions()
-  // If basePath is not assigned, popup Open Dialog to select a folder
-  if (!basePath) {
-    var files = app.dialogs.showOpenDialog('Select Folder', null, null, { properties: [ 'openDirectory' ] })
-    if (files && files.length > 0) {
-      basePath = files[0]
-      codeAnalyzer.analyze(basePath, options)
-    }
-  }
-}
 
 /**
- * Popup PreferenceDialog with Java Preference Schema
+ * Popup PreferenceDialog with php Preference Schema
  */
 function _handleConfigure () {
-  app.commands.execute('application:preferences', 'java')
+  app.commands.execute('application:preferences', 'php')
 }
 
 function init () {
-  app.commands.register('java:generate', _handleGenerate)
-  app.commands.register('java:reverse', _handleReverse)
-  app.commands.register('java:configure', _handleConfigure)
+  app.commands.register('php:generate', _handleGenerate)
+  app.commands.register('php:configure', _handleConfigure)
 }
 
 exports.init = init
