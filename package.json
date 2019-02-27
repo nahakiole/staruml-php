@@ -1,7 +1,7 @@
 {
-  "name": "staruml.php",
+  "name": "nahakiole.staruml-php",
   "title": "PHP",
-  "description": "PHP code generation",
+  "description": "PHP code generation. At the moment a bit buggy probably. Just open new issues with your behavior and your .mdj file and I'll fix it.",
   "homepage": "https://github.com/nahakiole/staruml-php",
   "issues": "https://github.com/nahakiole/staruml-php/issues",
   "keywords": ["php"],
