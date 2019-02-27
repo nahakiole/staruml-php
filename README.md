@@ -3,6 +3,8 @@ PHP Extension for StarUML
 
 This extension for StarUML(http://staruml.io) support to generate PHP code from UML model. Install this extension from Extension Manager of StarUML.
 
+Based on https://github.com/staruml/staruml-java
+
 PHP Code Generation
 --------------------
 
