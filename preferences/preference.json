@@ -23,40 +23,6 @@
       "description": "Number of spaces for indentation.",
       "type": "number",
       "default": 4
-    },
-    "php.rev": {
-      "text": "PHP Reverse Engineering",
-      "type": "section"
-    },
-    "php.rev.association": {
-      "text": "Use Association",
-      "description": "Reverse PHP Fields as UML Associations.",
-      "type": "check",
-      "default": true
-    },
-    "php.rev.publicOnly": {
-      "text": "Public Only",
-      "description": "Reverse public members only.",
-      "type": "check",
-      "default": false
-    },
-    "php.rev.typeHierarchy": {
-      "text": "Type Hierarchy Diagram",
-      "description": "Create a type hierarchy diagram for all classes and interfaces",
-      "type": "check",
-      "default": true
-    },
-    "php.rev.packageOverview": {
-      "text": "Package Overview Diagram",
-      "description": "Create overview diagram for each package",
-      "type": "check",
-      "default": true
-    },
-    "php.rev.packageStructure": {
-      "text": "Package Structure Diagram",
-      "description": "Create a package structure diagram for all packages",
-      "type": "check",
-      "default": true
     }
   }
 }

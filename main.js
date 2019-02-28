@@ -31,16 +31,6 @@ function getGenOptions () {
   }
 }
 
-function getRevOptions () {
-  return {
-    association: app.preferences.get('php.rev.association'),
-    publicOnly: app.preferences.get('php.rev.publicOnly'),
-    typeHierarchy: app.preferences.get('php.rev.typeHierarchy'),
-    packageOverview: app.preferences.get('php.rev.packageOverview'),
-    packageStructure: app.preferences.get('php.rev.packageStructure')
-  }
-}
-
 /**
  * Command Handler for php Generate
  *

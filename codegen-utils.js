@@ -30,10 +30,10 @@ class CodeWriter {
    */
   constructor (indentString) {
     /** @member {Array.<string>} lines */
-    this.lines = []
+    this.lines = [];
 
     /** @member {string} indentString */
-    this.indentString = indentString || '    ' // default 4 spaces
+    this.indentString = indentString || '    '; // default 4 spaces
 
     /** @member {Array.<string>} indentations */
     this.indentations = []
@@ -75,4 +75,4 @@ class CodeWriter {
 
 }
 
-exports.CodeWriter = CodeWriter
+exports.CodeWriter = CodeWriter;

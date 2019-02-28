@@ -56,7 +56,7 @@ Belows are the rules to convert from UML model elements to PHP source codes.
 
 ### UMLEnumeration
 
-* converted to _PHP Enum_.  (as a separate `.php` file)
+* converted to _PHP Class_.  (as a separate `.php` file)
 * `visibility` property to one of modifiers `public`, `protected`, `private` and none.
 * _UMLEnumerationLiteral_ to literals of enum.
 
