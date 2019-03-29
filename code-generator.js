@@ -304,11 +304,16 @@ class PHPCodeGenerator {
             this.writeDoc(codeWriter, elem.documentation, options);
             // modifiers
             var _modifiers = this.getModifiers(elem);
-            if (_modifiers.length > 0) {
+            if (_modifiers.length > 0 && !elem.isReadOnly) {
                 terms.push(_modifiers.join(' '))
             }
-            // name
-            terms.push('$' + elem.name);
+
+            if (elem.isReadOnly) {
+                terms.push("const");
+                terms.push(elem.name);
+            } else {
+                terms.push('$' + elem.name);
+            }
             // initial value
             if (elem.defaultValue && elem.defaultValue.length > 0) {
                 terms.push('= ' + elem.defaultValue)
@@ -367,8 +372,9 @@ class PHPCodeGenerator {
                 for (i = 0, len = params.length; i < len; i++) {
                     var p = params[i];
                     var s = '$' + p.name;
-                    if (p.isReadOnly === true) {
-                        s = 'final ' + s
+
+                    if (p.defaultValue && p.defaultValue.length > 0) {
+                        s = s + (' = ' + p.defaultValue)
                     }
                     paramTerms.push(s)
                 }
