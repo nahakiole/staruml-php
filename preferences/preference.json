@@ -23,6 +23,12 @@
       "description": "Number of spaces for indentation.",
       "type": "number",
       "default": 4
+    },
+    "php.gen.useStrictTypes": {
+      "text": "Use Strict Types",
+      "description": "Use strict PHP7 + types for attributes, methods and arguments.",
+      "type": "check",
+      "default": false
     }
   }
 }
