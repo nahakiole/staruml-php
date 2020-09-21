@@ -5,12 +5,27 @@
   "homepage": "https://github.com/nahakiole/staruml-php",
   "issues": "https://github.com/nahakiole/staruml-php/issues",
   "keywords": ["php"],
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": {
     "name": "Robin Glauser",
     "email": "robin.glauser@gmail.com",
     "url": "https://github.com/nahakiole"
   },
+  "contributors": [
+    {
+      "name": "Minkyu Lee",
+      "url": "https://github.com/niklauslee"
+    },
+    {
+      "name": "Ricardo Pereira",
+      "email": "contato@ricardopedias.com.br",
+      "url": "https://github.com/ricardopedias"
+    },
+    {
+      "name": "remi.r",
+      "url": "https://github.com/tekreme73"
+    }
+  ],
   "license": "MIT",
   "engines": {
     "staruml": "^3.0.0"
