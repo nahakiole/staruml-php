@@ -26,8 +26,12 @@ const codeGenerator = require('./code-generator')
 function getGenOptions () {
   return {
     phpDoc: app.preferences.get('php.gen.phpDoc'),
+    useNonEmptyArrayNotation: app.preferences.get('php.gen.useNonEmptyArrayNotation'),
     useTab: app.preferences.get('php.gen.useTab'),
-    indentSpaces: app.preferences.get('php.gen.indentSpaces')
+    indentSpaces: app.preferences.get('php.gen.indentSpaces'),
+    useStrictTypes: app.preferences.get('php.gen.useStrictTypes'),
+    classBracesOnNextLine: app.preferences.get('php.gen.classBracesOnNextLine'),
+    methodBracesOnNextLine: app.preferences.get('php.gen.methodBracesOnNextLine')
   }
 }
 
