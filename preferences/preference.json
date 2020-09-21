@@ -14,7 +14,7 @@
     },
     "php.gen.useNonEmptyArrayNotation": {
       "text": "PHPDoc non-empty Array Notation",
-      "description": "Use non-empty array notation in PHPDoc documentation",
+      "description": "Use non-empty array notation in PHPDoc comments.",
       "type": "check",
       "default": false
     },

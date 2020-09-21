@@ -89,6 +89,12 @@ class PHPCodeGenerator {
                 codeWriter = new codegen.CodeWriter(this.getIndentString(options));
                 codeWriter.writeLine("<?php");
 
+                if (options.useStrictTypes === true) {
+                    codeWriter.writeLine("");
+                    codeWriter.writeLine("declare(strict_types=1);");
+                    codeWriter.writeLine("");
+                }
+
                 this.writePackageDeclaration(codeWriter, elem, options);
                 codeWriter.writeLine();
                 this.writeAnnotationType(codeWriter, elem, options);
@@ -98,6 +104,13 @@ class PHPCodeGenerator {
                 fullPath = basePath + '/' + elem.name + '.php';
                 codeWriter = new codegen.CodeWriter(this.getIndentString(options));
                 codeWriter.writeLine("<?php");
+
+                if (options.useStrictTypes === true) {
+                    codeWriter.writeLine("");
+                    codeWriter.writeLine("declare(strict_types=1);");
+                    codeWriter.writeLine("");
+                }
+
                 this.writePackageDeclaration(codeWriter, elem, options);
                 codeWriter.writeLine();
                 this.writeClass(codeWriter, elem, options);
@@ -109,6 +122,13 @@ class PHPCodeGenerator {
             fullPath = basePath + '/' + elem.name + '.php';
             codeWriter = new codegen.CodeWriter(this.getIndentString(options));
             codeWriter.writeLine("<?php");
+
+            if (options.useStrictTypes === true) {
+                codeWriter.writeLine("");
+                codeWriter.writeLine("declare(strict_types=1);");
+                codeWriter.writeLine("");
+            }
+
             this.writePackageDeclaration(codeWriter, elem, options);
             codeWriter.writeLine();
             this.writeInterface(codeWriter, elem, options);
@@ -119,6 +139,13 @@ class PHPCodeGenerator {
             fullPath = basePath + '/' + elem.name + '.php';
             codeWriter = new codegen.CodeWriter(this.getIndentString(options));
             codeWriter.writeLine("<?php");
+
+            if (options.useStrictTypes === true) {
+                codeWriter.writeLine("");
+                codeWriter.writeLine("declare(strict_types=1);");
+                codeWriter.writeLine("");
+            }
+            
             this.writePackageDeclaration(codeWriter, elem, options);
             codeWriter.writeLine();
             this.writeEnum(codeWriter, elem, options);
@@ -220,15 +247,7 @@ class PHPCodeGenerator {
         }
         // multiplicity
         if (elem.multiplicity) {
-            if (['0..*', '1..*', '*'].includes(elem.multiplicity.trim())) {
-                if (elem.isOrdered === true) {
-                    _type = 'List<' + _type + '>'
-                } else {
-                    _type = 'Set<' + _type + '>'
-                }
-            } else if (elem.multiplicity !== '1' && elem.multiplicity.match(/^\d+$/)) { // number
-                _type += '[]'
-            }
+            _type = 'array'
         }
         return _type
     }
@@ -243,11 +262,22 @@ class PHPCodeGenerator {
         var i, len, lines;
         if (options.phpDoc && (typeof text === 'string')) {
             lines = text.trim().split('\n');
-            codeWriter.writeLine('/**');
-            for (i = 0, len = lines.length; i < len; i++) {
-                codeWriter.writeLine(' * ' + lines[i])
+
+            var paramPrefix = '@param';
+            var paramNodes = text.trim().split(' ');
+            if (paramNodes.length > 0) {
+                paramPrefix = paramNodes[0];
             }
-            codeWriter.writeLine(' */')
+            if (lines.length === 1 && paramPrefix === '@var') {
+                codeWriter.writeLine('/** ' + lines[0] + ' */');
+            } else {
+                codeWriter.writeLine('/**');
+                for (i = 0, len = lines.length; i < len; i++) {
+                    console.log(lines[i]);
+                    codeWriter.writeLine(' * ' + lines[i])
+                }
+                codeWriter.writeLine(' */')
+            }
         }
     }
 
@@ -286,9 +316,51 @@ class PHPCodeGenerator {
                 terms.push(visibility)
             }
             terms.push('function __construct()');
-            codeWriter.writeLine(terms.join(' ') + ' {');
+
+            if (options.methodBracesOnNextLine === true) {
+                codeWriter.writeLine(terms.join(' '));    
+                codeWriter.writeLine('{');    
+            } else {
+                codeWriter.writeLine(terms.join(' ') + ' {');
+            }
+            codeWriter.indent();
+            codeWriter.writeLine('// ...');
+            codeWriter.outdent();
             codeWriter.writeLine('}')
         }
+    }
+
+    generateDocAttrArrayNotation(param, options) {
+
+        // PHPStan & PSalm sintax
+        if (options.useNonEmptyArrayNotation === true) {
+            return '@var array<' + param.type + '> ' + param.documentation.trim();
+        }
+
+        // phpDocumentor sintax
+        return '@var ' + param.type + '[] ' + param.documentation.trim();
+    }
+    
+    generateDocParamArrayNotation(param, options) {
+
+        // PHPStan & PSalm sintax
+        if (options.useNonEmptyArrayNotation === true) {
+            return '\n@param array<'+ param.type+'> $' + param.name + ' ' + param.documentation;
+        }
+
+        // phpDocumentor sintax
+        return '\n@param '+ param.type + '[] $' + param.name + ' ' + param.documentation
+    }
+
+    generateDocReturnArrayNotation(param, options) {
+
+        // PHPStan & PSalm sintax
+        if (options.useNonEmptyArrayNotation === true) {
+            return '\n@return array<'+ param.type+'> ' + param.documentation;
+        }
+
+        // phpDocumentor sintax
+        return '\n@return '+ param.type+'[] ' + param.documentation;
     }
 
     /**
@@ -300,17 +372,30 @@ class PHPCodeGenerator {
     writeMemberVariable(codeWriter, elem, options) {
         if (elem.name.length > 0) {
             var terms = [];
+
             // doc
-            this.writeDoc(codeWriter, elem.documentation, options);
+            var doc = '';
+            if (elem.multiplicity && elem.type) {
+                doc += this.generateDocAttrArrayNotation(elem, options);
+            } else if(elem.type) {
+                doc += '@var ' + elem.type + ' ' + elem.documentation.trim();
+            }
+            if (doc !== '') {
+                this.writeDoc(codeWriter, doc, options);
+            }
+
             // modifiers
             var _modifiers = this.getModifiers(elem);
-            if (_modifiers.length > 0 && !elem.isReadOnly) {
+
+            if (_modifiers.length > 0 && (!elem.isReadOnly || options.useStrictTypes === true)) {
                 terms.push(_modifiers.join(' '))
             }
 
             if (elem.isReadOnly) {
                 terms.push("const");
                 terms.push(elem.name);
+            } else if (options.useStrictTypes === true) {
+                terms.push(this.getType(elem) + ' $' + elem.name);
             } else {
                 terms.push('$' + elem.name);
             }
@@ -350,12 +435,20 @@ class PHPCodeGenerator {
             }
 
             params.forEach(function (param) {
-                doc += '\n@param $' + param.name + ' ' + param.documentation
-            });
-            if (returnParam) {
-                doc += '\n@return ' + returnParam.documentation
+                if (param.multiplicity) {
+                    doc += this.generateDocParamArrayNotation(param, options);
+                } else {
+                    doc += '\n@param '+ param.type+' $' + param.name + ' ' + param.documentation
+                }
+            }, this);
+            if (returnParam && returnParam.multiplicity) {
+                doc += this.generateDocReturnArrayNotation(returnParam, options);
+            } else if (returnParam){
+                doc += '\n@return ' + returnParam.type + ' ' + returnParam.documentation;
             }
-            this.writeDoc(codeWriter, doc, options);
+            if (doc !== '') {
+                this.writeDoc(codeWriter, doc, options);
+            }
 
             // modifiers
             var _modifiers = this.getModifiers(elem);
@@ -376,34 +469,63 @@ class PHPCodeGenerator {
                     if (p.defaultValue && p.defaultValue.length > 0) {
                         s = s + (' = ' + p.defaultValue)
                     }
+
+                    if (options.useStrictTypes === true) {
+                        s = p.type + ' ' + s; 
+                    }
                     paramTerms.push(s)
                 }
             }
-            terms.push(elem.name + '(' + paramTerms.join(', ') + ')');
+
+            if (options.useStrictTypes === true && returnParam) {
+
+                if (returnParam.multiplicity) {
+                    terms.push(elem.name + '(' + paramTerms.join(', ') + '): array');
+                } else if (returnParam){
+                    terms.push(elem.name + '(' + paramTerms.join(', ') + '): ' + returnParam.type);
+                }
+
+            } else {
+                terms.push(elem.name + '(' + paramTerms.join(', ') + ')');
+            }
 
             // body
             if (skipBody === true || _modifiers.includes('abstract')) {
                 codeWriter.writeLine(terms.join(' ') + ';')
             } else {
-                codeWriter.writeLine(terms.join(' ') + ' {');
+
+                if (options.methodBracesOnNextLine === true) {
+                    codeWriter.writeLine(terms.join(' '));    
+                    codeWriter.writeLine('{');    
+                } else {
+                    codeWriter.writeLine(terms.join(' ') + ' {');
+                }
+
                 codeWriter.indent();
                 codeWriter.writeLine('// TODO implement here');
 
                 // return statement
                 if (returnParam) {
                     var returnType = this.getType(returnParam);
-                    if (returnType === 'boolean') {
+
+                    if (returnParam.multiplicity) {
+                        returnType = 'array';
+                    }
+
+                    if (returnType === 'boolean' || returnType === 'bool') {
                         codeWriter.writeLine('return false;')
                     } else if (returnType === 'int' || returnType === 'long' || returnType === 'short' || returnType === 'byte') {
                         codeWriter.writeLine('return 0;')
                     } else if (returnType === 'float') {
-                        codeWriter.writeLine('return 0.0f;')
+                        codeWriter.writeLine('return 0.0;')
                     } else if (returnType === 'double') {
-                        codeWriter.writeLine('return 0.0d;')
+                        codeWriter.writeLine('return 0.0;')
                     } else if (returnType === 'char') {
                         codeWriter.writeLine('return "0";')
-                    } else if (returnType === 'String') {
+                    } else if (returnType === 'string') {
                         codeWriter.writeLine('return "";')
+                    } else if (returnType === 'array') {
+                        codeWriter.writeLine('return [];')
                     } else {
                         codeWriter.writeLine('return null;')
                     }
@@ -430,14 +552,17 @@ class PHPCodeGenerator {
         if (app.project.getProject().author && app.project.getProject().author.length > 0) {
             doc += '\n@author ' + app.project.getProject().author
         }
-        this.writeDoc(codeWriter, doc, options);
+
+        if (doc !== '') {
+            this.writeDoc(codeWriter, doc, options);
+        }
 
         // Modifiers
         var _modifiers = this.getModifiers(elem);
         if (_modifiers.includes('abstract') !== true && elem.operations.some(function (op) {
             return op.isAbstract === true
         })) {
-            _modifiers.push('abstract')
+            _modifiers.push('abstract');
         }
         if (_modifiers.length > 0) {
             terms.push(_modifiers.join(' '))
@@ -460,7 +585,13 @@ class PHPCodeGenerator {
                 return e.name
             }).join(', '))
         }
-        codeWriter.writeLine(terms.join(' ') + ' {');
+
+        if (options.classBracesOnNextLine === true) {
+            codeWriter.writeLine(terms.join(' '));    
+            codeWriter.writeLine('{');    
+        } else {
+            codeWriter.writeLine(terms.join(' ') + ' {');
+        }
         codeWriter.writeLine();
         codeWriter.indent();
 
@@ -487,10 +618,18 @@ class PHPCodeGenerator {
             }
         }
 
-
+        var hasConstructor = false;
+        for (i = 0, len = elem.operations.length; i < len; i++) {
+            if (elem.operations[i].name === '__construct') {
+                hasConstructor = true;
+            }
+        }
+        
         // Constructor
-        this.writeConstructor(codeWriter, elem, options);
-        codeWriter.writeLine();
+        if (hasConstructor === false) {
+            this.writeConstructor(codeWriter, elem, options);
+            codeWriter.writeLine();
+        }
 
         // Methods
         for (i = 0, len = elem.operations.length; i < len; i++) {
@@ -519,6 +658,7 @@ class PHPCodeGenerator {
 
         codeWriter.outdent();
         codeWriter.writeLine('}');
+        codeWriter.writeLine();
 
         // Inner Definitions
         for (i = 0, len = elem.ownedElements.length; i < len; i++) {
@@ -553,8 +693,10 @@ class PHPCodeGenerator {
         var terms = [];
 
         // Doc
-        this.writeDoc(codeWriter, elem.documentation, options);
-
+        var doc = elem.documentation.trim();
+        if (doc !== '') {
+            this.writeDoc(codeWriter, elem.documentation, options);
+        }
 
         // Interface
         terms.push('interface');
@@ -567,7 +709,12 @@ class PHPCodeGenerator {
                 return e.name
             }).join(', '))
         }
-        codeWriter.writeLine(terms.join(' ') + ' {');
+        if (options.classBracesOnNextLine === true) {
+            codeWriter.writeLine(terms.join(' '));    
+            codeWriter.writeLine('{');    
+        } else {
+            codeWriter.writeLine(terms.join(' ') + ' {');
+        }
         codeWriter.writeLine();
         codeWriter.indent();
 
@@ -631,14 +778,24 @@ class PHPCodeGenerator {
     writeEnum(codeWriter, elem, options) {
         var i, len;
         var terms = [];
+
         // Doc
-        this.writeDoc(codeWriter, elem.documentation, options);
+        var doc = elem.documentation.trim();
+        if (doc !== '') {
+            this.writeDoc(codeWriter, elem.documentation, options);
+        }
 
         // Enum
         terms.push('class');
         terms.push(elem.name);
 
-        codeWriter.writeLine(terms.join(' ') + ' {');
+        if (options.classBracesOnNextLine === true) {
+            codeWriter.writeLine(terms.join(' '));    
+            codeWriter.writeLine('{');    
+        } else {
+            codeWriter.writeLine(terms.join(' ') + ' {');
+        }
+
         codeWriter.indent();
 
         // Literals
@@ -682,7 +839,13 @@ class PHPCodeGenerator {
         terms.push('@interface');
         terms.push(elem.name);
 
-        codeWriter.writeLine(terms.join(' ') + ' {');
+        if (options.classBracesOnNextLine === true) {
+            codeWriter.writeLine(terms.join(' '));    
+            codeWriter.writeLine('{');    
+        } else {
+            codeWriter.writeLine(terms.join(' ') + ' {');
+        }
+
         codeWriter.writeLine();
         codeWriter.indent();
 
