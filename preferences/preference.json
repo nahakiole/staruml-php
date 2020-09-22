@@ -7,10 +7,16 @@
       "type": "section"
     },
     "php.gen.phpDoc": {
-      "text": "PHPDoc",
+      "text": "Use PHPDoc",
       "description": "Generate PHPDoc comments.",
       "type": "check",
       "default": true
+    },
+    "php.gen.useNonEmptyArrayNotation": {
+      "text": "PHPDoc non-empty Array Notation",
+      "description": "Use non-empty array notation in PHPDoc comments.",
+      "type": "check",
+      "default": false
     },
     "php.gen.useTab": {
       "text": "Use Tab",
@@ -23,6 +29,24 @@
       "description": "Number of spaces for indentation.",
       "type": "number",
       "default": 4
+    },
+    "php.gen.useStrictTypes": {
+      "text": "Use Strict Types",
+      "description": "Use strict PHP7 + types for attributes, methods and arguments.",
+      "type": "check",
+      "default": true
+    },
+    "php.gen.classBracesOnNextLine": {
+      "text": "Class Braces on Next Line",
+      "description": "Use braces on the next line according to PSR 12.",
+      "type": "check",
+      "default": true
+    },
+    "php.gen.methodBracesOnNextLine": {
+      "text": "Method Braces on Next Line",
+      "description": "Use method braces on the next line according to PSR 12.",
+      "type": "check",
+      "default": true
     }
   }
 }
